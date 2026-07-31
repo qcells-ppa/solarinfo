@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한화큐셀 직접PPA 정보 기입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:      #C8441A;
+    --orange-lt:   #fdeee9;
+    --orange-bd:   #f5cfc4;
+    --cream:       #faf7f4;
+    --cream2:      #f5f0eb;
+    --cream3:      #ede8e0;
+    --border:      #ddd8d2;
+    --border2:     #c8bdb0;
+    --text:        #1a1a1a;
+    --text2:       #555;
+    --text3:       #888;
+    --white:       #fff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+  .logo-text { font-weight: 800; font-size: 17px; color: var(--orange); letter-spacing: -0.02em; }
+
+  .hero { padding: 36px 20px 24px; text-align: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--orange-lt); color: var(--orange);
+    border: 1px solid var(--orange-bd); border-radius: 999px;
+    padding: 6px 14px; font-size: 12px; font-weight: 700; margin-bottom: 14px;
+  }
+  .hero h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 8px; }
+  .hero h1 strong { color: var(--orange); }
+  .hero p.sub { font-size: 13px; color: var(--text3); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+
+  .main { max-width: 480px; margin: 0 auto; padding: 0 16px 60px; }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+  .card-header { padding: 20px 22px 4px; }
+  .card-header h2 { font-size: 16px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .card-header p { font-size: 12.5px; color: var(--text3); margin: 0 0 14px; line-height: 1.6; }
+  .card-body { padding: 4px 22px 22px; }
+
+  .section-title {
+    font-size: 12.5px; font-weight: 700; color: var(--text2);
+    margin: 26px 0 14px; display: flex; align-items: center; gap: 6px;
+  }
+  .section-title:first-child { margin-top: 0; }
+  .section-title .num {
+    width: 18px; height: 18px; border-radius: 50%; background: var(--orange);
+    color: var(--white); font-size: 10.5px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  .field { margin-bottom: 18px; }
+  .field-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+  .req { color: var(--orange); font-size: 13px; }
+  .opt { font-size: 10.5px; font-weight: 600; color: var(--text3); background: var(--cream3); border-radius: 4px; padding: 1px 7px; margin-left: 4px; }
+
+  input[type=text], input[type=tel], input[type=email], input[type=month] {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: inherit; color: var(--text); background: var(--cream); outline: none;
+    transition: border-color .18s, background .18s;
+  }
+  input:focus { border-color: var(--orange); background: var(--white); }
+  input.error { border-color: #c0392b; background: #fdf5f5; }
+  .err-msg { font-size: 11.5px; color: #c0392b; margin-top: 5px; display: none; }
+  .err-msg.show { display: block; }
+  .field-hint { font-size: 11.5px; color: var(--text3); margin-top: 6px; line-height: 1.55; }
+
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radio-btn input { display: none; }
+  .radio-btn label {
+    display: inline-flex; align-items: center; padding: 10px 18px;
+    border: 1.5px solid var(--border); border-radius: 999px; font-size: 13.5px; font-weight: 500;
+    cursor: pointer; transition: all .18s; background: var(--white); color: var(--text2); user-select: none;
+  }
+  .radio-btn input:checked + label { border-color: var(--orange); background: var(--orange-lt); color: var(--orange); font-weight: 700; }
+  .radio-col { display: flex; flex-direction: column; gap: 8px; }
+  .radio-col .radio-btn label { border-radius: 8px; width: 100%; padding: 12px 16px; }
+
+  .field-divider { border: none; border-top: 1px dashed var(--border); margin: 22px 0; }
+
+  #kepcoSubFields { display: none; }
+  #kepcoSubFields.show { display: block; }
+
+  .privacy-box {
+    background: var(--cream2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; font-size: 12px; line-height: 1.85; color: var(--text3);
+    max-height: 160px; overflow-y: auto; margin-bottom: 16px;
+  }
+  .privacy-box strong { color: var(--text); }
+
+  .agree-row { display: flex; flex-direction: column; gap: 10px; }
+  .agree-option {
+    display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+    border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer;
+    transition: all .18s; background: var(--cream);
+  }
+  .agree-option input { display: none; }
+  .agree-option.sel-yes { border-color: var(--orange); background: var(--orange-lt); }
+  .agree-dot {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border2);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all .18s; background: var(--white);
+  }
+  .agree-option.sel-yes .agree-dot { border-color: var(--orange); background: var(--orange); }
+  .agree-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--white); display: none; }
+  .agree-option.sel-yes .agree-dot::after { display: block; }
+  .agree-text { font-size: 13px; font-weight: 600; color: var(--text); }
+  .agree-option.sel-yes .agree-text { color: var(--orange); }
+
+  .btn-submit {
+    width: 100%; padding: 15px; border: none; border-radius: 8px;
+    background: var(--text); color: var(--white); font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-top: 22px; font-family: inherit;
+  }
+  .btn-submit:hover { background: #333; }
+  .btn-submit:disabled { background: var(--border2); cursor: not-allowed; }
+
+  .complete { display: none; text-align: center; padding: 52px 24px; }
+  .complete.show { display: block; }
+  .complete-icon {
+    width: 64px; height: 64px; background: var(--orange-lt); border: 1px solid var(--orange-bd);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 28px;
+  }
+  .complete h2 { font-size: 19px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+  .complete p { font-size: 13px; color: var(--text3); line-height: 1.85; margin-bottom: 22px; }
+
+  footer { background: var(--cream3); border-top: 1px solid var(--border); color: var(--text3); text-align: center; padding: 20px 16px; font-size: 11px; line-height: 1.9; }
+</style>
+</head>
+<body>
+
+<div class="header"><span class="logo-text">한화큐셀</span></div>
+
+<div class="hero">
+  <div class="hero-badge">⚡ 직접PPA 신고서류</div>
+  <h1><strong>직접PPA</strong> 정보 기입</h1>
+  <p class="sub">발전소 식별 정보와 계량기 관련 정보를 한 번에 입력해 주세요</p>
+</div>
+
+<div class="main">
+  <div class="card">
+
+    <div id="formWrap">
+      <div class="card-header">
+        <h2>발전소 · 사업주 · 계량기 정보</h2>
+        <p>아래 정보를 순서대로 입력해 주세요</p>
+      </div>
+      <div class="card-body">
+
+        <div class="section-title"><span class="num">1</span>발전소 식별 정보</div>
+
+        <div class="field">
+          <div class="field-label">발전소명 <span class="req">*</span></div>
+          <input type="text" id="plantName" placeholder="예: OO태양광발전소">
+          <div class="err-msg" id="err-plantName">발전소명을 입력해 주세요</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">대표자명(사업주명) <span class="req">*</span></div>
+          <input type="text" id="repName" placeholder="성함을 입력해 주세요">
+          <div class="err-msg" id="err-repName">대표자명을 입력해 주세요</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">사업자등록번호 <span class="opt">선택</span></div>
+          <input type="text" id="bizNo" placeholder="000-00-00000" maxlength="12">
+          <div class="field-hint">입력 시 동명이인·유사 발전소명 구분에 도움이 됩니다</div>
+        </div>
+
+        <hr class="field-divider">
+
+        <div class="section-title"><span class="num">2</span>사업주 연락처</div>
+
+        <div class="field">
+          <div class="field-label">사업주 전화번호 <span class="req">*</span></div>
+          <input type="tel" id="ownerTel" placeholder="010-0000-0000" maxlength="13">
+          <div class="err-msg" id="err-ownerTel">전화번호를 입력해 주세요</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">이메일 주소 <span class="req">*</span></div>
+          <input type="email" id="ownerEmail" placeholder="example@company.com">
+          <div class="err-msg" id="err-ownerEmail">이메일 주소를 입력해 주세요</div>
+        </div>
+
+        <hr class="field-divider">
+
+        <div class="section-title"><span class="num">3</span>계량기 정보</div>
+
+        <div class="field">
+          <div class="field-label">계량기 종류 <span class="req">*</span></div>
+          <div class="radio-group">
+            <div class="radio-btn"><input type="radio" name="meterType" id="mt1" value="한전 계량기" onclick="toggleKepco(true)"><label for="mt1">한전 계량기</label></div>
+            <div class="radio-btn"><input type="radio" name="meterType" id="mt2" value="KPX(전력거래소) 계량기" onclick="toggleKepco(false)"><label for="mt2">KPX(전력거래소) 계량기</label></div>
+          </div>
+          <div class="err-msg" id="err-meterType">계량기 종류를 선택해 주세요</div>
+          <div class="field-hint">직접PPA는 KPX 계량기가 필요합니다. 한전 계량기인 경우 교체가 필요합니다</div>
+        </div>
+
+        <div id="kepcoSubFields">
+          <div class="field">
+            <div class="field-label">KPX 계량기 교체 방식 <span class="req">*</span></div>
+            <div class="radio-col">
+              <div class="radio-btn"><input type="radio" name="replaceType" id="rt1" value="직접 교체"><label for="rt1">직접 교체하겠습니다</label></div>
+              <div class="radio-btn"><input type="radio" name="replaceType" id="rt2" value="소개 업체를 통한 교체 희망"><label for="rt2">소개해 주시는 업체를 통해 교체하고 싶습니다</label></div>
+            </div>
+            <div class="err-msg" id="err-replaceType">교체 방식을 선택해 주세요</div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">교체 예상 시기 <span class="req">*</span></div>
+            <input type="month" id="replaceDate">
+            <div class="err-msg" id="err-replaceDate">교체 예상 시기를 선택해 주세요</div>
+            <div class="field-hint">정확하지 않아도 됩니다. 대략적인 예상 시점을 선택해 주세요</div>
+          </div>
+        </div>
+
+        <hr class="field-divider">
+
+        <div class="privacy-box">
+          <strong>개인정보 수집·이용 동의 안내</strong><br><br>
+          한화솔루션㈜은 「개인정보보호법」 제30조에 따라 아래와 같이 개인정보를 수집·이용합니다.<br><br>
+          <strong>수집 항목:</strong> 발전소명, 대표자명, 사업자등록번호, 사업주 전화번호·이메일, 계량기 종류, 교체 관련 정보<br>
+          <strong>수집 목적:</strong> 직접PPA 신청 처리 및 계량기 교체 안내<br>
+          <strong>보유 기간:</strong> 처리 완료 후 3년간 보관 후 파기<br><br>
+          ※ 동의를 거부하실 수 있으나, 신청 처리가 제한될 수 있습니다.
+        </div>
+
+        <div class="agree-row">
+          <div class="agree-option" id="agreeYes" onclick="setAgree(true)">
+            <input type="radio" name="agree" value="yes">
+            <div class="agree-dot"></div>
+            <div class="agree-text">동의합니다.</div>
+          </div>
+          <div class="agree-option" id="agreeNo" onclick="setAgree(false)">
+            <input type="radio" name="agree" value="no">
+            <div class="agree-dot"></div>
+            <div class="agree-text">동의하지 않습니다.</div>
+          </div>
+        </div>
+        <div class="err-msg" id="err-agree">개인정보 수집·이용에 동의해 주세요</div>
+
+        <button class="btn-submit" onclick="submitForm()">제출하기 ✓</button>
+      </div>
+    </div>
+
+    <div id="complete" class="complete">
+      <div class="complete-icon">✅</div>
+      <h2>제출이 완료되었습니다</h2>
+      <p>입력해 주신 정보를 확인 후<br>담당자가 순차적으로 안내드립니다.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer>© 2026 Hanwha Qcells. All Rights Reserved.</footer>
+
+<script>
+let agreeValue = null;
+
+function toggleKepco(show) {
+  document.getElementById('kepcoSubFields').classList.toggle('show', show);
+}
+
+function setAgree(val) {
+  agreeValue = val;
+  document.getElementById('agreeYes').classList.toggle('sel-yes', val === true);
+  document.getElementById('agreeNo').classList.toggle('sel-yes', val === false);
+  document.getElementById('err-agree').classList.remove('show');
+}
+
+function showErr(id, show) { const el = document.getElementById(id); if (el) el.classList.toggle('show', show); }
+function markField(id, err) { const el = document.getElementById(id); if (el) el.classList.toggle('error', err); }
+
+function validate() {
+  let ok = true;
+
+  const pn = document.getElementById('plantName').value.trim();
+  markField('plantName', !pn); showErr('err-plantName', !pn); if (!pn) ok = false;
+
+  const rn = document.getElementById('repName').value.trim();
+  markField('repName', !rn); showErr('err-repName', !rn); if (!rn) ok = false;
+
+  const ot = document.getElementById('ownerTel').value.trim();
+  markField('ownerTel', !ot); showErr('err-ownerTel', !ot); if (!ot) ok = false;
+
+  const oe = document.getElementById('ownerEmail').value.trim();
+  markField('ownerEmail', !oe); showErr('err-ownerEmail', !oe); if (!oe) ok = false;
+
+  const mt = document.querySelector('input[name="meterType"]:checked');
+  showErr('err-meterType', !mt); if (!mt) ok = false;
+
+  if (mt && mt.value === '한전 계량기') {
+    const rt = document.querySelector('input[name="replaceType"]:checked');
+    showErr('err-replaceType', !rt); if (!rt) ok = false;
+
+    const rd = document.getElementById('replaceDate').value;
+    markField('replaceDate', !rd); showErr('err-replaceDate', !rd); if (!rd) ok = false;
+  }
+
+  if (agreeValue !== true) { showErr('err-agree', true); ok = false; }
+
+  return ok;
+}
+
+// ⬇️⬇️⬇️ 여기에 Apps Script 배포 후 받은 웹앱 URL을 붙여넣으세요 ⬇️⬇️⬇️
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx-GsPbnS3Qc_5AZ_LUjjBimO8YeP8Yjtr8OeXFH54SbTUDKTCOPT-QG3YtLqDmAJvqiw/exec';
+// ⬆️⬆️⬆️ 예: https://script.google.com/macros/s/AKfyc.../exec ⬆️⬆️⬆️
+
+function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function checkedVal(name) { const el = document.querySelector('input[name="'+name+'"]:checked'); return el ? el.value : ''; }
+
+async function submitForm() {
+  if (!validate()) return;
+
+  const btn = document.querySelector('.btn-submit');
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = '전송 중…';
+
+  const payload = {
+    구분: '직접PPA 정보 기입',
+    제출일시: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+    발전소명: val('plantName'),
+    대표자명: val('repName'),
+    사업자등록번호: val('bizNo'),
+    사업주전화번호: val('ownerTel'),
+    사업주이메일: val('ownerEmail'),
+    계량기종류: checkedVal('meterType'),
+    교체방식: checkedVal('replaceType'),
+    교체예상시기: val('replaceDate'),
+    개인정보동의: '동의'
+  };
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('formWrap').style.display = 'none';
+    document.getElementById('complete').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = orig;
+    alert('일시적인 오류로 제출되지 않았습니다.\n잠시 후 다시 시도해 주세요.');
+  }
+}
+
+document.getElementById('ownerTel').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'');
+  if (v.length <= 3) this.value = v;
+  else if (v.length <= 7) this.value = v.slice(0,3)+'-'+v.slice(3);
+  else this.value = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+});
+document.getElementById('bizNo').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'');
+  if (v.length > 5) v = v.slice(0,3)+'-'+v.slice(3,5)+'-'+v.slice(5,10);
+  else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
+  this.value = v;
+});
+</script>
+</body>
+</html>
